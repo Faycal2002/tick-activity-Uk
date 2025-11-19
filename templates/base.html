@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+</head>
+
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-dark navbar-expand-lg" style="background-color: #000;">
+        <div class="container-fluid d-flex justify-content-between align-items-center">
+
+            <!-- LEFT: Logo -->
+            <a class="navbar-brand" href="/">
+                <img src="{{ url_for('static', filename='img/logo.png') }}" alt="Logo" style="height: 35px;">
+            </a>
+
+            <!-- Hamburger Button -->
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <!-- RIGHT: Buttons (Collapsible) -->
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <div class="navbar-nav ml-auto gap-3">
+                    <a href="/" class="nav-link btn btn-dark rounded-pill px-4"
+                        style="font-weight: 600; font-size: 14px; letter-spacing: 0.5px;">Map</a>
+                    <a href="/education" class="nav-link btn btn-dark rounded-pill px-4"
+                        style="font-weight: 600; font-size: 14px; letter-spacing: 0.5px;">Species Guide</a>
+                    <a href="/report" class="nav-link btn btn-dark rounded-pill px-4"
+                        style="font-weight: 600; font-size: 14px; letter-spacing: 0.5px;">Report Sighting</a>
+                </div>
+            </div>
+
+        </div>
+    </nav>
+
+    {% block content %}
+    {% endblock %}
+
+    <!-- Leaflet JS (placed before page scripts so init can use L) -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin="">
+        </script>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <!-- Allow child templates to inject their scripts (index.html) -->
+    {% block scripts %}
+    {% endblock %}
+
+</body>
+
+</html>
