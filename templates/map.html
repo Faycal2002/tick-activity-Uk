@@ -1,0 +1,303 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container py-5 mt-5" style="max-width: 1200px;">
+
+    <!-- Filtres -->
+    <div class="card bg-dark text-light p-3 mb-4 shadow-sm rounded-lg filters-card">
+        <div class="row">
+
+            <div class="col-md-4">
+                <label class="filter-label">Date range</label>
+                <select id="filter-date" class="form-control bg-black border-secondary">
+                    <option value="all" selected>All time</option>
+                    <option value="30">Last 30 days</option>
+                    <option value="7">Last 7 days</option>
+                    <option value="90">Last 90 days</option>
+                </select>
+            </div>
+
+            <div class="col-md-4">
+                <label class="filter-label">Species</label>
+                <select id="filter-species" class="form-control bg-black border-secondary">
+                    <option value="all">Any</option>
+                    <option value="Ixodes apronophorus">Ixodes apronophorus</option>
+                    <option value="Ixodes acuminatus">Ixodes acuminatus</option>
+                    <option value="Dermacentor frontalis">Dermacentor frontalis</option>
+                    <option value="Ixodes arboricola">Ixodes arboricola</option>
+                </select>
+            </div>
+
+            <div class="col-md-4">
+                <label class="filter-label">Severity</label>
+                <select id="filter-severity" class="form-control bg-black border-secondary">
+                    <option value="all">Any</option>
+                    <option value="low">Low</option>
+                    <option value="medium">Medium</option>
+                    <option value="high">High</option>
+                </select>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Carte + Résultats -->
+    <div class="row">
+
+        <!-- Carte -->
+        <div class="col-lg-8 mb-3">
+            <div class="card bg-dark p-3 shadow-sm rounded-lg map-results-card">
+                <h5 class="text-light text-center mb-3">UK Tick Sightings</h5>
+
+                <div id="map"></div>
+
+                <!-- Légende -->
+                <div class="d-flex justify-content-center mt-3">
+                    <span class="legend-dot bg-success"></span> Low
+                    <span class="legend-dot bg-warning ml-3"></span> Medium
+                    <span class="legend-dot bg-danger ml-3"></span> High
+                </div>
+            </div>
+        </div>
+
+        <!-- Résultats -->
+        <div class="col-lg-4">
+            <div class="card bg-dark text-light p-3 shadow-sm rounded-lg map-results-card">
+                <h5 class="mb-3">Results</h5>
+                <div id="results-list" class="results-scroll"></div>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+
+<script>
+    let map;
+    let markers = [];
+
+    const cityCoords = {
+        "London": [51.5074, -0.1278],
+        "Manchester": [53.4808, -2.2426],
+        "Birmingham": [52.4862, -1.8904],
+        "Liverpool": [53.4084, -2.9916],
+        "Leeds": [53.8008, -1.5491],
+        "Bristol": [51.4545, -2.5879],
+        "Edinburgh": [55.9533, -3.1883],
+        "Glasgow": [55.8642, -4.2518],
+        "Newcastle": [54.9783, -1.6178],
+        "Sheffield": [53.3811, -1.4701],
+        "Nottingham": [52.9548, -1.1581],
+        "Cardiff": [51.4816, -3.1791],
+        "Belfast": [54.5973, -5.9301],
+        "Southampton": [50.9097, -1.4043],
+        "Leicester": [52.6369, -1.1398]
+    };
+
+    function normalizeCityName(raw) {
+        if (!raw) return "";
+        return raw.split(",")[0].trim();
+    }
+
+    const severityColors = {
+        low: "green",
+        medium: "orange",
+        high: "red"
+    };
+
+    const severityTextClass = {
+        low: "text-success",
+        medium: "text-warning",
+        high: "text-danger"
+    };
+
+    function createColoredIcon(color) {
+        return L.divIcon({
+            className: "custom-pin",
+            html: `<span style="font-size:28px; color:${color}">●</span>`
+        });
+    }
+
+    async function fetchSightings() {
+        const res = await fetch("/api/sightings");
+        if (!res.ok) {
+            console.error("Erreur /api/sightings", res.status);
+            return [];
+        }
+        const data = await res.json();
+        console.log("Données sightings:", data);
+        return data;
+    }
+
+    function filterRows(rows) {
+        const dateFilter = document.getElementById("filter-date").value;
+        const speciesFilter = document.getElementById("filter-species").value;
+        const now = new Date();
+
+        return rows.filter(r => {
+            const d = new Date(r.date);
+
+            if (speciesFilter !== "all" && r.latinName !== speciesFilter) return false;
+
+            if (dateFilter !== "all") {
+                const limitDays = parseInt(dateFilter);
+                const diff = (now - d) / (1000 * 3600 * 24);
+                if (diff > limitDays) return false;
+            }
+
+            return true;
+        });
+    }
+
+    // Regroupe par ville. Si severityMap existe, on réutilise les couleurs globales.
+    function aggregateByCity(rows, severityMap = null) {
+        const stats = {};
+
+        rows.forEach(r => {
+            const city = normalizeCityName(r.city || r.location);
+            if (!city) return;
+
+            if (!stats[city]) {
+                stats[city] = {
+                    city,
+                    count: 0,
+                    latestDate: null,
+                    latestSighting: null
+                };
+            }
+
+            stats[city].count++;
+
+            const d = new Date(r.date);
+            if (!stats[city].latestDate || d > stats[city].latestDate) {
+                stats[city].latestDate = d;
+                stats[city].latestSighting = r;
+            }
+        });
+
+        const list = Object.values(stats);
+        if (list.length === 0) return [];
+
+        if (severityMap) {
+            list.forEach(c => {
+                c.severity = severityMap[c.city] || "low";
+            });
+            return list;
+        }
+
+        // calcul global : <60 low, 60–70 medium, >70 high
+        list.forEach(c => {
+            if (c.count < 60) {
+                c.severity = "low";
+            } else if (c.count <= 70) {
+                c.severity = "medium";
+            } else {
+                c.severity = "high";
+            }
+        });
+
+        return list;
+    }
+
+    function filterBySeverity(cityList) {
+        const severityFilter = document.getElementById("filter-severity").value;
+        if (severityFilter === "all") return cityList;
+        return cityList.filter(c => c.severity === severityFilter);
+    }
+
+    function renderList(cities) {
+        const container = document.getElementById("results-list");
+        container.innerHTML = "";
+
+        if (cities.length === 0) {
+            container.innerHTML = "<p class='text-muted'>No results.</p>";
+            return;
+        }
+
+        cities.sort((a, b) => b.count - a.count);
+
+        cities.forEach(c => {
+            const sevClass = severityTextClass[c.severity] || "text-light";
+            const last = c.latestSighting;
+
+            container.innerHTML += `
+                <div class="result-item">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <strong class="${sevClass}">${c.city}</strong><br>
+                            <small>${c.count} sightings • last on ${c.latestDate.toLocaleDateString()}</small><br>
+                            <small>${last ? `${last.species} — ${last.latinName}` : ""}</small>
+                        </div>
+                        <span class="legend-dot" style="background:${severityColors[c.severity]}"></span>
+                    </div>
+                </div>
+            `;
+        });
+    }
+
+    function renderMarkers(cities) {
+        markers.forEach(m => m.remove());
+        markers = [];
+
+        cities.forEach(c => {
+            const coords = cityCoords[c.city];
+            if (!coords) return;
+
+            const color = severityColors[c.severity] || "gray";
+            const icon = createColoredIcon(color);
+            const last = c.latestSighting;
+
+            const marker = L.marker(coords, { icon }).addTo(map);
+            marker.bindPopup(`
+                <strong>${c.city}</strong><br>
+                ${c.count} sightings<br>
+                ${last ? `${last.species} — ${last.latinName}<br>` : ""}
+                <small>Last: ${c.latestDate.toLocaleString()}</small>
+            `);
+
+            markers.push(marker);
+        });
+    }
+
+    async function initMap() {
+        map = L.map("map").setView([54.5, -3], 5.5);
+
+        L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+            maxZoom: 18,
+            attribution: '&copy; OpenStreetMap contributors'
+        }).addTo(map);
+
+        const rawData = await fetchSightings();
+
+        // Calcul des couleurs globales une fois
+        const globalCityList = aggregateByCity(rawData);
+        const severityMap = {};
+        globalCityList.forEach(c => {
+            severityMap[c.city] = c.severity;
+        });
+
+        function refresh() {
+            const filteredRows = filterRows(rawData);
+            let cities = aggregateByCity(filteredRows, severityMap);
+            cities = filterBySeverity(cities);
+            renderMarkers(cities);
+            renderList(cities);
+        }
+
+        refresh();
+
+        document
+            .querySelectorAll("#filter-date, #filter-species, #filter-severity")
+            .forEach(el => el.addEventListener("change", refresh));
+    }
+
+    document.addEventListener("DOMContentLoaded", initMap);
+</script>
+
+{% endblock %}

@@ -6,6 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
 
     <!-- Leaflet CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
@@ -30,9 +32,9 @@
             <!-- RIGHT: Buttons (Collapsible) -->
             <div class="collapse navbar-collapse" id="navbarNav">
                 <div class="navbar-nav ml-auto gap-3">
-                    <a href="/" class="nav-link btn btn-dark rounded-pill px-4"
+                    <a href="/map" class="nav-link btn btn-dark rounded-pill px-4"
                         style="font-weight: 600; font-size: 14px; letter-spacing: 0.5px;">Map</a>
-                    <a href="/education" class="nav-link btn btn-dark rounded-pill px-4"
+                    <a href="/species" class="nav-link btn btn-dark rounded-pill px-4"
                         style="font-weight: 600; font-size: 14px; letter-spacing: 0.5px;">Species Guide</a>
                     <a href="/report" class="nav-link btn btn-dark rounded-pill px-4"
                         style="font-weight: 600; font-size: 14px; letter-spacing: 0.5px;">Report Sighting</a>
@@ -41,6 +43,7 @@
 
         </div>
     </nav>
+    <div class="navbar-divider"></div>
 
     {% block content %}
     {% endblock %}
@@ -56,6 +59,48 @@
     <!-- Allow child templates to inject their scripts (index.html) -->
     {% block scripts %}
     {% endblock %}
+
+    <!-- Déplace le footer ici, avant la fermeture du body -->
+    <footer class="bg-black text-light py-5 mt-5">
+        <div class="section-divider"></div>
+
+        <div class="container">
+            <div class="text-center mb-4">
+                <a href="{{ url_for('home')}}#home">
+                    <img src="{{ url_for('static', filename='img/Logo.png') }}" alt="Logo" width="160" height="80">
+                </a>
+            </div>
+
+            <div class="row align-items-start">
+                <!-- ELANCO à gauche (sur md+) -->
+                <div class="col-12 col-md-6 order-1 order-md-1 pr-md-4">
+                    <h6 class="text-uppercase fw-bold">Elanco Company</h6>
+                    <p style="max-width: 420px;">
+                        Elanco is a global leader in animal health dedicated to innovating
+                        and delivering products and services to prevent and treat disease
+                        in farm animals and pets, creating value for farmers, pet owners,
+                        veterinarians, stakeholders, and society as a whole.
+                    </p>
+                </div>
+
+                <!-- CONTACT : colonne positionnée à droite, contenu aligné à gauche -->
+                <div class="col-12 col-md-6 order-2 order-md-2 d-flex justify-content-end">
+                    <div class="text-left" style="max-width: 360px;">
+                        <h6 class="text-uppercase fw-bold">Contact</h6>
+                        <p class="mb-1"><i class="fas fa-home mr-2"></i> Sheffield, S1 3RA, UK</p>
+                        <p class="mb-1"><i class="fas fa-envelope mr-2"></i> smarthealth@hallam.shu.ac.uk</p>
+                        <p class="mb-1"><i class="fas fa-phone mr-2"></i> + 44 7649 80 64 84</p>
+                        <p class="mb-0"><i class="fas fa-print mr-2"></i> + 44 7151 64 84 74</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-center pt-4 mt-4" style="border-top: 1px solid #333;">
+                © 2020 Copyright:
+                <a class="text-white" href="https://www.shu.ac.uk.com">SmartHealth.com</a>
+            </div>
+        </div>
+    </footer>
 
 </body>
 

@@ -1,3 +1,7 @@
+/* ===========================
+   🟦 NAVBAR
+=========================== */
+
 .navbar-nav .nav-link {
     margin: 5px !important;
 }
@@ -6,14 +10,31 @@
     gap: 0 !important;
 }
 
-/* Style global */
+.navbar-divider {
+    width: 100%;
+    height: 2px;
+    background-color: white;
+}
+
+/* ===========================
+   🟦 GLOBAL STYLES
+=========================== */
+
 body {
     background-color: #000;
     color: #fff;
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont,
+        "Segoe UI", BlinkMacSystemFont, sans-serif;
 }
 
-/* Titres du hero */
+p {
+    color: #e5e5e5;
+}
+
+/* ===========================
+   🟦 HERO SECTION
+=========================== */
+
 .hero-title {
     font-size: 2.8rem;
     font-weight: 700;
@@ -24,22 +45,28 @@ body {
     opacity: 0.8;
 }
 
-/* Carte Google Maps */
+/* ===========================
+   🟦 MAP STYLING
+=========================== */
+
 #map {
     width: 100%;
     max-width: 960px;
-    height: 450px;          /* OBLIGATOIRE */
+    height: 450px;
+    /* Important ! */
     border-radius: 20px;
-    background: #ddd;       /* juste au cas où */
+    background: #ddd;
+    /* fallback au cas où */
 }
 
+/* ===========================
+   🟦 BUTTON STYLING
+=========================== */
 
-/* Boutons arrondis (Explore Map, nav, etc.) */
 .btn-pill {
     border-radius: 999px;
 }
 
-/* Boutons de la navbar */
 .btn-nav {
     background-color: #1a1a1a;
     color: #fff;
@@ -51,7 +78,179 @@ body {
     color: #fff;
 }
 
-/* Optionnel : un peu de marge autour du main */
+/* ===========================
+   🟦 MAIN CONTENT
+=========================== */
+
 main {
     min-height: 100vh;
+}
+
+/* ===========================
+   🟦 FEATURES SECTION
+=========================== */
+
+.features-section {
+    background-color: #000;
+    padding-top: 4rem;
+    padding-bottom: 3rem;
+}
+
+.feature-block {
+    margin-bottom: 2.2rem;
+}
+
+.feature-title {
+    font-weight: 700;
+    font-size: 1.8rem;
+    margin-bottom: 0.3rem;
+}
+
+.feature-text {
+    color: #cfcfcf;
+    max-width: 520px;
+    margin: 0 auto;
+    line-height: 1.5;
+}
+
+/* ===========================
+   🟦 DIVIDER BETWEEN SECTIONS
+=========================== */
+
+.section-divider {
+    width: 60%;
+    max-width: 500px;
+    height: 2px;
+    margin: 2.5rem auto;
+    background: linear-gradient(to right, transparent, #ff4d4d, transparent);
+    opacity: 0.85;
+}
+
+/* ===========================
+   🟦 INFO SECTION
+=========================== */
+
+.info-section {
+    background-color: #000;
+    height: 100vh;
+    /* pleine hauteur */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    /* centre tout verticalement */
+    align-items: center;
+    /* centre horizontalement */
+    padding-top: 0;
+    padding-bottom: 0;
+}
+
+.info-title {
+    font-weight: 700;
+    font-size: 1.6rem;
+    line-height: 1.3;
+    margin-bottom: 0.5rem;
+}
+
+.info-subtitle {
+    color: #bfbfbf;
+    font-size: 1.1rem;
+    line-height: 1.4;
+}
+
+/* ===========================
+   🟦 ICON GRID
+=========================== */
+
+.icon-row {
+    margin-top: 2.5rem;
+    display: flex;
+    justify-content: center;
+    gap: 60px;
+    flex-wrap: wrap;
+}
+
+.icon-block {
+    padding: 20px 10px;
+    text-align: center;
+    min-width: 120px;
+}
+
+.icon {
+    color: #cfcfcf;
+    margin-bottom: 10px;
+}
+
+.icon-label {
+    font-size: 1rem;
+    color: #e5e5e5;
+    margin-top: 5px;
+}
+
+/* ===========================
+   🟦 TITLE IMAGE (logo near title)
+=========================== */
+
+.title-icon {
+    height: 45px;
+    width: auto;
+    margin-right: 10px;
+}
+
+/* === FULLSCREEN SECTIONS === */
+.fullscreen-section {
+    height: 100vh;
+    /* occupe tout l'écran */
+    display: flex;
+    /* pour centrer le contenu */
+    flex-direction: column;
+    justify-content: center;
+    /* centre verticalement */
+    align-items: center;
+    /* centre horizontalement */
+    padding: 0;
+    /* pas de padding inutile */
+    margin: 0;
+}
+
+/* Text alignment inside fullscreen */
+.fullscreen-section .container {
+    max-width: 900px;
+}
+
+.form-control {
+    color: black !important;
+}
+
+/* ===========================
+   🟦 MAP PAGE LAYOUT
+=========================== */
+
+/* même hauteur pour la carte et la colonne Results */
+.map-results-card {
+    height: 520px;
+}
+
+/* zone scrollable pour la liste des résultats */
+.results-scroll {
+    max-height: 430px;
+    /* 520 - titre - padding approx */
+    overflow-y: auto;
+}
+
+/* pastille de légende */
+.legend-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: 5px;
+}
+
+/* cartes individuelles dans Results */
+.result-item {
+    background: #111;
+    border: 1px solid #333;
+    padding: 12px;
+    border-radius: 10px;
+    margin-bottom: 10px;
 }
