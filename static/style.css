@@ -254,3 +254,189 @@ main {
     border-radius: 10px;
     margin-bottom: 10px;
 }
+/* ===========================
+   🟩 SPECIES PAGE (premium)
+=========================== */
+
+.species-hero {
+    color: #fff;
+}
+
+.species-title {
+    font-size: 2.2rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+.species-subtitle {
+    max-width: 650px;
+    margin: 0.75rem auto 0;
+    color: #cfcfcf;
+}
+
+/* Stats cards en haut */
+
+.species-stat-card {
+    background: #0d0d0d;
+    border: 1px solid #262626;
+    border-radius: 14px;
+    padding: 12px 10px;
+}
+
+.stat-label {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #aaaaaa;
+    margin-bottom: 4px;
+}
+
+.stat-value {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 2px;
+}
+
+.stat-small {
+    font-size: 0.85rem;
+    color: #bbbbbb;
+}
+
+/* Filtres */
+
+.species-filters .filter-label {
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-weight: 600;
+    color: #bbbbbb;
+}
+
+/* Légende risque */
+
+.species-legend .legend-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: 4px;
+}
+
+.species-legend .legend-label {
+    font-size: 0.85rem;
+    color: #d0d0d0;
+}
+
+/* Cartes espèces */
+
+.species-card {
+    background: #050505;
+    border-radius: 18px;
+    border: 1px solid #262626;
+    transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+}
+
+.species-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.6);
+    border-color: #ff4d4d;
+}
+
+.species-card .card-body {
+    padding: 18px 20px;
+}
+
+.species-common {
+    font-weight: 700;
+    font-size: 1.1rem;
+    margin-bottom: 0;
+}
+
+.species-latin {
+    font-size: 0.9rem;
+    color: #bbbbbb;
+    margin-bottom: 0.6rem;
+}
+
+.species-text {
+    font-size: 0.95rem;
+    color: #d8d8d8;
+    margin-bottom: 0.75rem;
+}
+
+.species-meta {
+    padding-left: 1.1rem;
+    margin: 0;
+    font-size: 0.9rem;
+    color: #c9c9c9;
+}
+
+.species-meta li + li {
+    margin-top: 0.15rem;
+}
+
+/* Badges de risque */
+
+.badge-risk {
+    border-radius: 999px;
+    padding: 4px 10px;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-weight: 600;
+}
+
+.badge-high {
+    background: #ff4d4d;
+    color: #fff;
+}
+
+.badge-medium {
+    background: #ffb347;
+    color: #000;
+}
+
+.badge-low {
+    background: #3cb371;
+    color: #000;
+}
+/* ===========================
+   🟥 REPORT PAGE
+=========================== */
+
+.report-hero {
+    color: #fff;
+}
+
+.report-title {
+    font-size: 2.1rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+.report-subtitle {
+    max-width: 650px;
+    margin: 0.75rem auto 0;
+    color: #cfcfcf;
+}
+
+.report-card {
+    border-radius: 18px;
+    border: 1px solid #262626;
+}
+
+.report-label {
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-weight: 600;
+    color: #bbbbbb;
+}
+
+#report-success {
+    background-color: #12381f;
+    border-color: #1f7a36;
+    color: #d8ffd8;
+}

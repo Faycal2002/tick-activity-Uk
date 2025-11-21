@@ -1,0 +1,226 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container py-5 mt-5" style="max-width: 900px;">
+
+    <section class="report-hero text-center mb-4">
+        <h1 class="report-title">Report a Tick Sighting</h1>
+        <p class="report-subtitle">
+            Help build a clearer picture of tick activity across the UK by reporting
+            when and where you’ve seen a tick on a pet, person, or in the environment.
+        </p>
+        <div class="section-divider"></div>
+    </section>
+
+    <!-- Message succès -->
+    <div id="report-success" class="alert alert-success d-none" role="alert">
+        Thank you — your tick sighting has been recorded (demo).  
+        This information helps improve awareness of tick-borne risks.
+    </div>
+
+    <div class="card bg-dark text-light shadow-sm rounded-lg report-card">
+        <div class="card-body">
+            <form id="report-form" novalidate>
+
+                <!-- Ligne 1 : date + city -->
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label class="report-label" for="date">Date of sighting</label>
+                        <input type="date" id="date" name="date"
+                               class="form-control bg-black border-secondary text-light" required>
+                        <div class="invalid-feedback">
+                            Please provide the date of the sighting.
+                        </div>
+                    </div>
+
+                    <div class="form-group col-md-6">
+                        <label class="report-label" for="city">City</label>
+                        <select id="city" name="city"
+                                class="form-control bg-black border-secondary text-light" required>
+                            <option value="">Select a city</option>
+                            <option>London</option>
+                            <option>Manchester</option>
+                            <option>Birmingham</option>
+                            <option>Liverpool</option>
+                            <option>Leeds</option>
+                            <option>Bristol</option>
+                            <option>Edinburgh</option>
+                            <option>Glasgow</option>
+                            <option>Newcastle</option>
+                            <option>Sheffield</option>
+                            <option>Nottingham</option>
+                            <option>Cardiff</option>
+                            <option>Belfast</option>
+                            <option>Southampton</option>
+                            <option>Leicester</option>
+                            <option>Other</option>
+                        </select>
+                        <div class="invalid-feedback">
+                            Please select the city where the tick was found.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Ligne 2 : environment + host -->
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label class="report-label" for="environment">Environment</label>
+                        <select id="environment" name="environment"
+                                class="form-control bg-black border-secondary text-light">
+                            <option value="">Select environment</option>
+                            <option>Park / Garden</option>
+                            <option>Woodland</option>
+                            <option>Open countryside</option>
+                            <option>Urban street</option>
+                            <option>Coastal area</option>
+                            <option>Farmland</option>
+                            <option>Other</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group col-md-6">
+                        <label class="report-label" for="host">Host (who was the tick on?)</label>
+                        <select id="host" name="host"
+                                class="form-control bg-black border-secondary text-light" required>
+                            <option value="">Select host</option>
+                            <option>Dog</option>
+                            <option>Cat</option>
+                            <option>Human</option>
+                            <option>Wildlife</option>
+                            <option>Livestock</option>
+                            <option>Environment only (not attached)</option>
+                        </select>
+                        <div class="invalid-feedback">
+                            Please tell us who or what the tick was on.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Ligne 3 : species + severity -->
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label class="report-label" for="species">Tick species (if known)</label>
+                        <select id="species" name="species"
+                                class="form-control bg-black border-secondary text-light">
+                            <option value="">Unknown / not sure</option>
+                            <option data-latin="Ixodes apronophorus">Marsh tick</option>
+                            <option data-latin="Ixodes acuminatus">Southern rodent tick</option>
+                            <option data-latin="Dermacentor frontalis">Passerine tick</option>
+                            <option data-latin="Ixodes arboricola">Tree-hole tick</option>
+                            <option data-latin="Ixodes canisuga">Fox/badger tick</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group col-md-6">
+                        <label class="report-label" for="severity">Perceived severity</label>
+                        <select id="severity" name="severity"
+                                class="form-control bg-black border-secondary text-light">
+                            <option value="">Select severity</option>
+                            <option value="low">Low – single tick, removed quickly</option>
+                            <option value="medium">Medium – multiple ticks / delayed removal</option>
+                            <option value="high">High – heavy infestation or illness suspected</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Notes -->
+                <div class="form-group">
+                    <label class="report-label" for="notes">Additional details</label>
+                    <textarea id="notes" name="notes" rows="4"
+                              class="form-control bg-black border-secondary text-light"
+                              placeholder="Describe the location, symptoms, or anything else useful..."></textarea>
+                </div>
+
+                <!-- Email optionnel -->
+                <div class="form-group">
+                    <label class="report-label" for="email">Email (optional)</label>
+                    <input type="email" id="email" name="email"
+                           class="form-control bg-black border-secondary text-light"
+                           placeholder="Only if you’re happy to be contacted for follow-up">
+                </div>
+
+                <div class="d-flex justify-content-end">
+                    <button type="submit" class="btn btn-light btn-pill px-4">
+                        Submit report
+                    </button>
+                </div>
+
+            </form>
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+
+<script>
+    // Petite logique front pour :
+    // - validation visuelle Bootstrap
+    // - afficher un message de succès
+    // - logguer les données comme un JSON (pour simuler l'envoi à une API)
+    document.addEventListener("DOMContentLoaded", () => {
+        const form = document.getElementById("report-form");
+        const successBox = document.getElementById("report-success");
+
+        form.addEventListener("submit", (e) => {
+            e.preventDefault();
+            successBox.classList.add("d-none");
+
+            // Validation simple
+            let valid = true;
+            const requiredFields = ["date", "city", "host"];
+
+            requiredFields.forEach(id => {
+                const field = document.getElementById(id);
+                if (!field.value) {
+                    field.classList.add("is-invalid");
+                    valid = false;
+                } else {
+                    field.classList.remove("is-invalid");
+                }
+            });
+
+            if (!valid) {
+                return;
+            }
+
+            // Construire un "payload" JSON (comme si on l'envoyait à une API)
+            const speciesSelect = document.getElementById("species");
+            const selectedOption = speciesSelect.options[speciesSelect.selectedIndex];
+            const latinName = selectedOption.getAttribute("data-latin") || null;
+
+            const payload = {
+                date: document.getElementById("date").value,
+                city: document.getElementById("city").value,
+                environment: document.getElementById("environment").value || null,
+                host: document.getElementById("host").value,
+                species: speciesSelect.value || null,
+                latinName: latinName,
+                severity: document.getElementById("severity").value || null,
+                notes: document.getElementById("notes").value || null,
+                email: document.getElementById("email").value || null
+            };
+
+            console.log("Tick report payload (demo, not sent):", payload);
+
+            // Afficher message de succès
+            successBox.classList.remove("d-none");
+
+            // Réinitialiser le formulaire
+            form.reset();
+        });
+
+        // Retirer l'état invalide dès qu'on modifie un champ
+        form.querySelectorAll("input, select, textarea").forEach(el => {
+            el.addEventListener("input", () => {
+                el.classList.remove("is-invalid");
+            });
+        });
+    });
+</script>
+
+{% endblock %}

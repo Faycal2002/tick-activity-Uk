@@ -1,0 +1,259 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container py-5 mt-5" style="max-width: 1100px;">
+
+    <!-- HERO / INTRO -->
+    <section class="species-hero text-center mb-4">
+        <h1 class="species-title">UK Tick Species Guide</h1>
+        <p class="species-subtitle">
+            Explore the main tick species recorded in the Elanco dataset and understand
+            which ones are most frequently reported across UK cities.
+        </p>
+        <div class="section-divider"></div>
+    </section>
+
+    <!-- RÉSUMÉ RAPIDE -->
+    <div class="row text-center text-light mb-4">
+        <div class="col-md-4 mb-3 mb-md-0">
+            <div class="species-stat-card">
+                <p class="stat-label">Total species</p>
+                <p class="stat-value">5</p>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3 mb-md-0">
+            <div class="species-stat-card">
+                <p class="stat-label">Most frequent</p>
+                <p class="stat-value">Passerine tick</p>
+                <p class="stat-small"><em>Dermacentor frontalis</em> — 226 sightings</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="species-stat-card">
+                <p class="stat-label">Highest risk group</p>
+                <p class="stat-value">Fox/badger &amp; Passerine ticks</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- FILTRES -->
+    <div class="card bg-dark text-light p-3 mb-4 shadow-sm rounded-lg species-filters">
+        <div class="row">
+            <div class="col-md-6 mb-3 mb-md-0">
+                <label class="filter-label">Search by name</label>
+                <input id="species-search" type="text"
+                       class="form-control bg-black border-secondary"
+                       placeholder="e.g. Marsh tick, Ixodes acuminatus">
+            </div>
+            <div class="col-md-6">
+                <label class="filter-label">Risk level</label>
+                <select id="species-risk-filter" class="form-control bg-black border-secondary">
+                    <option value="all">All</option>
+                    <option value="low">Low risk</option>
+                    <option value="medium">Medium risk</option>
+                    <option value="high">High risk</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <!-- LÉGENDE RISQUE -->
+    <div class="d-flex justify-content-center mb-3 species-legend">
+        <span class="legend-dot bg-success"></span><span class="legend-label">Low</span>
+        <span class="legend-dot bg-warning ml-3"></span><span class="legend-label">Medium</span>
+        <span class="legend-dot bg-danger ml-3"></span><span class="legend-label">High</span>
+    </div>
+
+    <!-- LISTE DES ESPÈCES (données réelles du fichier Excel) -->
+    <div id="species-list" class="row">
+
+        <!-- Passerine tick (226 sightings) -->
+        <div class="col-md-6 mb-4 species-item"
+             data-risk="high"
+             data-name="passerine tick dermacentor frontalis">
+            <div class="card species-card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <h5 class="species-common">Passerine tick</h5>
+                            <p class="species-latin"><em>Dermacentor frontalis</em></p>
+                        </div>
+                        <span class="badge badge-risk badge-high">High</span>
+                    </div>
+
+                    <p class="species-text">
+                        The most frequently reported tick in the dataset, with
+                        <strong>226 sightings</strong>. Often associated with birds and
+                        can occasionally bite pets or humans, especially in green urban areas.
+                    </p>
+
+                    <ul class="species-meta">
+                        <li><strong>Hosts:</strong> Passerine birds, small mammals, occasionally pets</li>
+                        <li><strong>Activity:</strong> Mainly spring to early summer</li>
+                        <li><strong>Regions:</strong> Widely distributed across UK cities</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Fox/badger tick (210 sightings) -->
+        <div class="col-md-6 mb-4 species-item"
+             data-risk="high"
+             data-name="fox badger tick ixodes canisuga">
+            <div class="card species-card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <h5 class="species-common">Fox/badger tick</h5>
+                            <p class="species-latin"><em>Ixodes canisuga</em></p>
+                        </div>
+                        <span class="badge badge-risk badge-high">High</span>
+                    </div>
+
+                    <p class="species-text">
+                        Recorded <strong>210 times</strong> in the dataset. Closely linked to wild
+                        canids (foxes) and badgers, but may also be found on dogs that roam in
+                        woodland or semi-rural environments.
+                    </p>
+
+                    <ul class="species-meta">
+                        <li><strong>Hosts:</strong> Foxes, badgers, dogs</li>
+                        <li><strong>Activity:</strong> All year, with peaks in spring/autumn</li>
+                        <li><strong>Regions:</strong> Hotspots around suburban and rural edges</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Southern rodent tick (192 sightings) -->
+        <div class="col-md-6 mb-4 species-item"
+             data-risk="medium"
+             data-name="southern rodent tick ixodes acuminatus">
+            <div class="card species-card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <h5 class="species-common">Southern rodent tick</h5>
+                            <p class="species-latin"><em>Ixodes acuminatus</em></p>
+                        </div>
+                        <span class="badge badge-risk badge-medium">Medium</span>
+                    </div>
+
+                    <p class="species-text">
+                        Reported <strong>192 times</strong>. Primarily associated with small rodents,
+                        but can occasionally be found on pets that explore dense vegetation or
+                        overgrown gardens.
+                    </p>
+
+                    <ul class="species-meta">
+                        <li><strong>Hosts:</strong> Rodents, small mammals, sometimes cats and dogs</li>
+                        <li><strong>Activity:</strong> Warmer months, especially late spring</li>
+                        <li><strong>Regions:</strong> Scattered across multiple UK locations</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Marsh tick (186 sightings) -->
+        <div class="col-md-6 mb-4 species-item"
+             data-risk="low"
+             data-name="marsh tick ixodes apronophorus">
+            <div class="card species-card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <h5 class="species-common">Marsh tick</h5>
+                            <p class="species-latin"><em>Ixodes apronophorus</em></p>
+                        </div>
+                        <span class="badge badge-risk badge-low">Low</span>
+                    </div>
+
+                    <p class="species-text">
+                        Seen <strong>186 times</strong> in the dataset. Favors damp, marshy or
+                        wetland habitats. Less frequently encountered in typical urban parks
+                        but still relevant for dogs walked near waterlogged areas.
+                    </p>
+
+                    <ul class="species-meta">
+                        <li><strong>Hosts:</strong> Small mammals, wildlife, occasionally dogs</li>
+                        <li><strong>Activity:</strong> Spring and early summer</li>
+                        <li><strong>Regions:</strong> Localised around wetter landscapes</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tree-hole tick (186 sightings) -->
+        <div class="col-md-6 mb-4 species-item"
+             data-risk="low"
+             data-name="tree hole tick ixodes arboricola">
+            <div class="card species-card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <h5 class="species-common">Tree-hole tick</h5>
+                            <p class="species-latin"><em>Ixodes arboricola</em></p>
+                        </div>
+                        <span class="badge badge-risk badge-low">Low</span>
+                    </div>
+
+                    <p class="species-text">
+                        Also recorded <strong>186 times</strong>. Mainly associated with birds nesting
+                        in tree cavities. Considered lower risk for routine pet exposure, but still
+                        part of the UK tick landscape.
+                    </p>
+
+                    <ul class="species-meta">
+                        <li><strong>Hosts:</strong> Birds, especially cavity nesters</li>
+                        <li><strong>Activity:</strong> Follows bird breeding seasons</li>
+                        <li><strong>Regions:</strong> Woodlands and mature tree areas</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+
+<script>
+    // Filtrage simple côté client : recherche + niveau de risque
+    document.addEventListener("DOMContentLoaded", () => {
+        const searchInput = document.getElementById("species-search");
+        const riskSelect = document.getElementById("species-risk-filter");
+        const items = Array.from(document.querySelectorAll(".species-item"));
+
+        function applyFilters() {
+            const search = (searchInput.value || "").toLowerCase().trim();
+            const risk = riskSelect.value;
+
+            items.forEach(card => {
+                const cardRisk = card.getAttribute("data-risk");
+                const cardName = card.getAttribute("data-name");
+
+                let visible = true;
+
+                if (risk !== "all" && cardRisk !== risk) {
+                    visible = false;
+                }
+
+                if (search && !cardName.includes(search)) {
+                    visible = false;
+                }
+
+                card.style.display = visible ? "" : "none";
+            });
+        }
+
+        searchInput.addEventListener("input", applyFilters);
+        riskSelect.addEventListener("change", applyFilters);
+    });
+</script>
+
+{% endblock %}
