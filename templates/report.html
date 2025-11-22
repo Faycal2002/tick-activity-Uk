@@ -21,8 +21,14 @@
 
     <div class="card bg-dark text-light shadow-sm rounded-lg report-card">
         <div class="card-body">
-            <input type="hidden" id="latinName" name="latinName">
-                            <!-- Image upload -->
+
+            <!-- 🔴 FORM AVEC enctype + TOUT dedans -->
+            <form id="report-form" novalidate enctype="multipart/form-data">
+
+                <!-- champ caché pour le latin -->
+                <input type="hidden" id="latinName" name="latinName">
+
+                <!-- Image upload (MAINTENANT DANS LE FORM) -->
                 <div class="form-group">
                     <label class="report-label" for="image">Upload a photo (optional)</label>
                     <input type="file" id="image" name="image"
@@ -32,9 +38,6 @@
                     <img id="image-preview" class="mt-2 d-none"
                          style="max-width: 200px; border-radius: 8px; border: 1px solid #444;">
                 </div>
-
-
-            <form id="report-form" novalidate>
 
                 <!-- Ligne 1 : date + city -->
                 <div class="form-row">
@@ -50,43 +53,43 @@
                     <div class="form-group col-md-6">
                         <label class="report-label" for="city">City</label>
                         <select id="city" name="city"
-        class="form-control bg-black border-secondary text-light" required>
-    <option value="">Select a city</option>
-    <option>London</option>
-    <option>Manchester</option>
-    <option>Birmingham</option>
-    <option>Liverpool</option>
-    <option>Leeds</option>
-    <option>Bristol</option>
-    <option>Edinburgh</option>
-    <option>Glasgow</option>
-    <option>Newcastle</option>
-    <option>Sheffield</option>
-    <option>Nottingham</option>
-    <option>Cardiff</option>
-    <option>Belfast</option>
-    <option>Southampton</option>
-    <option>Leicester</option>
+                                class="form-control bg-black border-secondary text-light" required>
+                            <option value="">Select a city</option>
+                            <option>London</option>
+                            <option>Manchester</option>
+                            <option>Birmingham</option>
+                            <option>Liverpool</option>
+                            <option>Leeds</option>
+                            <option>Bristol</option>
+                            <option>Edinburgh</option>
+                            <option>Glasgow</option>
+                            <option>Newcastle</option>
+                            <option>Sheffield</option>
+                            <option>Nottingham</option>
+                            <option>Cardiff</option>
+                            <option>Belfast</option>
+                            <option>Southampton</option>
+                            <option>Leicester</option>
 
-    <!-- villes ajoutées -->
-    <option>Portsmouth</option>
-    <option>Brighton</option>
-    <option>Hull</option>
-    <option>Wolverhampton</option>
-    <option>Derby</option>
-    <option>Stoke-on-Trent</option>
-    <option>Coventry</option>
-    <option>Sunderland</option>
-    <option>Reading</option>
-    <option>Plymouth</option>
-    <option>York</option>
-    <option>Aberdeen</option>
-    <option>Dundee</option>
-    <option>Swansea</option>
-    <option>Milton Keynes</option>
-    <option>Northampton</option>
-    <option>Luton</option>
-</select>
+                            <!-- villes ajoutées -->
+                            <option>Portsmouth</option>
+                            <option>Brighton</option>
+                            <option>Hull</option>
+                            <option>Wolverhampton</option>
+                            <option>Derby</option>
+                            <option>Stoke-on-Trent</option>
+                            <option>Coventry</option>
+                            <option>Sunderland</option>
+                            <option>Reading</option>
+                            <option>Plymouth</option>
+                            <option>York</option>
+                            <option>Aberdeen</option>
+                            <option>Dundee</option>
+                            <option>Swansea</option>
+                            <option>Milton Keynes</option>
+                            <option>Northampton</option>
+                            <option>Luton</option>
+                        </select>
 
                         <div class="invalid-feedback">
                             Please select the city where the tick was found.
@@ -279,4 +282,3 @@
 </script>
 
 {% endblock %}
-

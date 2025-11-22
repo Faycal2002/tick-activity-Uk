@@ -257,6 +257,7 @@ def debug_reports():
         "host": r.host,
         "species": r.species,
         "latinName": r.latin_name,
+        "image_filename": r.image_filename,
         "created_at": r.created_at.isoformat() if r.created_at else None
     } for r in reports])
 
