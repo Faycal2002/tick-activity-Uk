@@ -440,3 +440,40 @@ main {
     border-color: #1f7a36;
     color: #d8ffd8;
 }
+
+
+
+.prevention-section {
+    background-color: #050505;
+    border-top: 1px solid #222;
+    border-bottom: 1px solid #222;
+}
+
+.prevention-card {
+    background: #111;
+    border-radius: 16px;
+    padding: 16px 18px;
+    border: 1px solid #333;
+}
+
+.prevention-card h5 {
+    font-size: 1.1rem;
+    margin-bottom: 0.75rem;
+}
+
+.prevention-card ul {
+    padding-left: 1.2rem;
+    font-size: 0.95rem;
+    color: #d0d0d0;
+}
+
+
+
+.species-img {
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+    border-radius: 14px;
+    border: 1px solid #333;
+    display: block;
+}

@@ -2,6 +2,56 @@
 
 {% block content %}
 
+<!-- PREVENTION TIPS SECTION -->
+<section class="prevention-section py-5">
+    <div class="container" style="max-width: 900px;">
+        <h2 class="mb-4 text-center">Tick prevention & protection</h2>
+        <p class="text-center text-muted mb-5">
+            Simple habits can greatly reduce the risk of tick bites and tick-borne diseases
+            for both pets and people.
+        </p>
+
+        <div class="row">
+            <!-- Card 1 -->
+            <div class="col-md-4 mb-4">
+                <div class="prevention-card h-100">
+                    <h5>Before going outdoors</h5>
+                    <ul class="mb-0">
+                        <li>Use vet-recommended tick treatments on pets.</li>
+                        <li>Wear long sleeves and trousers in tall grass.</li>
+                        <li>Choose light-coloured clothing to spot ticks easily.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Card 2 -->
+            <div class="col-md-4 mb-4">
+                <div class="prevention-card h-100">
+                    <h5>After walks & trips</h5>
+                    <ul class="mb-0">
+                        <li>Check your dog, cat, and family for ticks.</li>
+                        <li>Pay attention to ears, neck, between toes.</li>
+                        <li>Shower soon after outdoor activity if possible.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Card 3 -->
+            <div class="col-md-4 mb-4">
+                <div class="prevention-card h-100">
+                    <h5>If you find a tick</h5>
+                    <ul class="mb-0">
+                        <li>Remove with a proper tick remover or fine tweezers.</li>
+                        <li>Pull steadily, close to the skin—do not twist or burn.</li>
+                        <li>Contact a vet or doctor if you notice illness or rash.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
 <div class="container py-5 mt-5" style="max-width: 1100px;">
 
     <!-- HERO / INTRO -->
@@ -14,7 +64,7 @@
         <div class="section-divider"></div>
     </section>
 
-    <!-- RÉSUMÉ RAPIDE -->
+    <!-- RÉSUMÉ RAPIDE (les valeurs utilisent counts si dispo) -->
     <div class="row text-center text-light mb-4">
         <div class="col-md-4 mb-3 mb-md-0">
             <div class="species-stat-card">
@@ -26,7 +76,10 @@
             <div class="species-stat-card">
                 <p class="stat-label">Most frequent</p>
                 <p class="stat-value">Passerine tick</p>
-                <p class="stat-small"><em>Dermacentor frontalis</em> — 226 sightings</p>
+                <p class="stat-small">
+                    <em>Dermacentor frontalis</em> — 
+                    {{ counts.get("Dermacentor frontalis", 226) }} sightings
+                </p>
             </div>
         </div>
         <div class="col-md-4">
@@ -65,16 +118,21 @@
         <span class="legend-dot bg-danger ml-3"></span><span class="legend-label">High</span>
     </div>
 
-    <!-- LISTE DES ESPÈCES (données réelles du fichier Excel) -->
+    <!-- LISTE DES ESPÈCES (images 100% statiques venant de static/img) -->
     <div id="species-list" class="row">
 
-        <!-- Passerine tick (226 sightings) -->
+        <!-- Passerine tick -->
         <div class="col-md-6 mb-4 species-item"
              data-risk="high"
              data-name="passerine tick dermacentor frontalis">
             <div class="card species-card">
                 <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-start">
+
+                    <img class="species-img"
+                         src="{{ url_for('static', filename='img/passerine tick.jpg') }}"
+                         alt="Dermacentor frontalis">
+
+                    <div class="d-flex justify-content-between align-items-start mt-3">
                         <div>
                             <h5 class="species-common">Passerine tick</h5>
                             <p class="species-latin"><em>Dermacentor frontalis</em></p>
@@ -83,9 +141,10 @@
                     </div>
 
                     <p class="species-text">
-                        The most frequently reported tick in the dataset, with
-                        <strong>226 sightings</strong>. Often associated with birds and
-                        can occasionally bite pets or humans, especially in green urban areas.
+                        Currently recorded 
+                        <strong>{{ counts.get("Dermacentor frontalis", 226) }} sightings</strong>.
+                        Often associated with birds and can occasionally bite pets or humans,
+                        especially in green urban areas.
                     </p>
 
                     <ul class="species-meta">
@@ -97,13 +156,18 @@
             </div>
         </div>
 
-        <!-- Fox/badger tick (210 sightings) -->
+        <!-- Fox/badger tick -->
         <div class="col-md-6 mb-4 species-item"
              data-risk="high"
              data-name="fox badger tick ixodes canisuga">
             <div class="card species-card">
                 <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-start">
+
+                    <img class="species-img"
+                         src="{{ url_for('static', filename='img/Foxbadger tick.jpg') }}"
+                         alt="Ixodes canisuga">
+
+                    <div class="d-flex justify-content-between align-items-start mt-3">
                         <div>
                             <h5 class="species-common">Fox/badger tick</h5>
                             <p class="species-latin"><em>Ixodes canisuga</em></p>
@@ -112,9 +176,10 @@
                     </div>
 
                     <p class="species-text">
-                        Recorded <strong>210 times</strong> in the dataset. Closely linked to wild
-                        canids (foxes) and badgers, but may also be found on dogs that roam in
-                        woodland or semi-rural environments.
+                        Currently recorded 
+                        <strong>{{ counts.get("Ixodes canisuga", 210) }} sightings</strong>.
+                        Closely linked to wild canids (foxes) and badgers, but may also be found
+                        on dogs that roam in woodland or semi-rural environments.
                     </p>
 
                     <ul class="species-meta">
@@ -126,13 +191,18 @@
             </div>
         </div>
 
-        <!-- Southern rodent tick (192 sightings) -->
+        <!-- Southern rodent tick -->
         <div class="col-md-6 mb-4 species-item"
              data-risk="medium"
              data-name="southern rodent tick ixodes acuminatus">
             <div class="card species-card">
                 <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-start">
+
+                    <img class="species-img"
+                         src="{{ url_for('static', filename='img/Southern rodent tick.jpg') }}"
+                         alt="Ixodes acuminatus">
+
+                    <div class="d-flex justify-content-between align-items-start mt-3">
                         <div>
                             <h5 class="species-common">Southern rodent tick</h5>
                             <p class="species-latin"><em>Ixodes acuminatus</em></p>
@@ -141,9 +211,10 @@
                     </div>
 
                     <p class="species-text">
-                        Reported <strong>192 times</strong>. Primarily associated with small rodents,
-                        but can occasionally be found on pets that explore dense vegetation or
-                        overgrown gardens.
+                        Currently recorded 
+                        <strong>{{ counts.get("Ixodes acuminatus", 192) }} sightings</strong>.
+                        Primarily associated with small rodents, but can occasionally be found
+                        on pets that explore dense vegetation or overgrown gardens.
                     </p>
 
                     <ul class="species-meta">
@@ -155,13 +226,18 @@
             </div>
         </div>
 
-        <!-- Marsh tick (186 sightings) -->
+        <!-- Marsh tick -->
         <div class="col-md-6 mb-4 species-item"
              data-risk="low"
              data-name="marsh tick ixodes apronophorus">
             <div class="card species-card">
                 <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-start">
+
+                    <img class="species-img"
+                         src="{{ url_for('static', filename='img/Marsh tick.jpg') }}"
+                         alt="Ixodes apronophorus">
+
+                    <div class="d-flex justify-content-between align-items-start mt-3">
                         <div>
                             <h5 class="species-common">Marsh tick</h5>
                             <p class="species-latin"><em>Ixodes apronophorus</em></p>
@@ -170,9 +246,10 @@
                     </div>
 
                     <p class="species-text">
-                        Seen <strong>186 times</strong> in the dataset. Favors damp, marshy or
-                        wetland habitats. Less frequently encountered in typical urban parks
-                        but still relevant for dogs walked near waterlogged areas.
+                        Currently recorded 
+                        <strong>{{ counts.get("Ixodes apronophorus", 186) }} sightings</strong>.
+                        Favours damp, marshy or wetland habitats. Less frequently encountered
+                        in typical urban parks but still relevant near waterlogged areas.
                     </p>
 
                     <ul class="species-meta">
@@ -184,13 +261,18 @@
             </div>
         </div>
 
-        <!-- Tree-hole tick (186 sightings) -->
+        <!-- Tree-hole tick -->
         <div class="col-md-6 mb-4 species-item"
              data-risk="low"
              data-name="tree hole tick ixodes arboricola">
             <div class="card species-card">
                 <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-start">
+
+                    <img class="species-img"
+                         src="{{ url_for('static', filename='img/Treehole tick.jpg') }}"
+                         alt="Ixodes arboricola">
+
+                    <div class="d-flex justify-content-between align-items-start mt-3">
                         <div>
                             <h5 class="species-common">Tree-hole tick</h5>
                             <p class="species-latin"><em>Ixodes arboricola</em></p>
@@ -199,9 +281,10 @@
                     </div>
 
                     <p class="species-text">
-                        Also recorded <strong>186 times</strong>. Mainly associated with birds nesting
-                        in tree cavities. Considered lower risk for routine pet exposure, but still
-                        part of the UK tick landscape.
+                        Currently recorded 
+                        <strong>{{ counts.get("Ixodes arboricola", 186) }} sightings</strong>.
+                        Mainly associated with birds nesting in tree cavities. Considered lower
+                        risk for routine pet exposure, but still part of the UK tick landscape.
                     </p>
 
                     <ul class="species-meta">

@@ -15,12 +15,25 @@
 
     <!-- Message succès -->
     <div id="report-success" class="alert alert-success d-none" role="alert">
-        Thank you — your tick sighting has been recorded (demo).  
+        Thank you — your tick sighting has been recorded.
         This information helps improve awareness of tick-borne risks.
     </div>
 
     <div class="card bg-dark text-light shadow-sm rounded-lg report-card">
         <div class="card-body">
+            <input type="hidden" id="latinName" name="latinName">
+                            <!-- Image upload -->
+                <div class="form-group">
+                    <label class="report-label" for="image">Upload a photo (optional)</label>
+                    <input type="file" id="image" name="image"
+                           class="form-control-file text-light"
+                           accept="image/*">
+                    <small class="text-muted d-block">JPG/PNG recommended, max ~5MB.</small>
+                    <img id="image-preview" class="mt-2 d-none"
+                         style="max-width: 200px; border-radius: 8px; border: 1px solid #444;">
+                </div>
+
+
             <form id="report-form" novalidate>
 
                 <!-- Ligne 1 : date + city -->
@@ -37,25 +50,44 @@
                     <div class="form-group col-md-6">
                         <label class="report-label" for="city">City</label>
                         <select id="city" name="city"
-                                class="form-control bg-black border-secondary text-light" required>
-                            <option value="">Select a city</option>
-                            <option>London</option>
-                            <option>Manchester</option>
-                            <option>Birmingham</option>
-                            <option>Liverpool</option>
-                            <option>Leeds</option>
-                            <option>Bristol</option>
-                            <option>Edinburgh</option>
-                            <option>Glasgow</option>
-                            <option>Newcastle</option>
-                            <option>Sheffield</option>
-                            <option>Nottingham</option>
-                            <option>Cardiff</option>
-                            <option>Belfast</option>
-                            <option>Southampton</option>
-                            <option>Leicester</option>
-                            <option>Other</option>
-                        </select>
+        class="form-control bg-black border-secondary text-light" required>
+    <option value="">Select a city</option>
+    <option>London</option>
+    <option>Manchester</option>
+    <option>Birmingham</option>
+    <option>Liverpool</option>
+    <option>Leeds</option>
+    <option>Bristol</option>
+    <option>Edinburgh</option>
+    <option>Glasgow</option>
+    <option>Newcastle</option>
+    <option>Sheffield</option>
+    <option>Nottingham</option>
+    <option>Cardiff</option>
+    <option>Belfast</option>
+    <option>Southampton</option>
+    <option>Leicester</option>
+
+    <!-- villes ajoutées -->
+    <option>Portsmouth</option>
+    <option>Brighton</option>
+    <option>Hull</option>
+    <option>Wolverhampton</option>
+    <option>Derby</option>
+    <option>Stoke-on-Trent</option>
+    <option>Coventry</option>
+    <option>Sunderland</option>
+    <option>Reading</option>
+    <option>Plymouth</option>
+    <option>York</option>
+    <option>Aberdeen</option>
+    <option>Dundee</option>
+    <option>Swansea</option>
+    <option>Milton Keynes</option>
+    <option>Northampton</option>
+    <option>Luton</option>
+</select>
+
                         <div class="invalid-feedback">
                             Please select the city where the tick was found.
                         </div>
@@ -158,15 +190,31 @@
 {{ super() }}
 
 <script>
-    // Petite logique front pour :
-    // - validation visuelle Bootstrap
-    // - afficher un message de succès
-    // - logguer les données comme un JSON (pour simuler l'envoi à une API)
     document.addEventListener("DOMContentLoaded", () => {
         const form = document.getElementById("report-form");
         const successBox = document.getElementById("report-success");
+        const speciesSelect = document.getElementById("species");
+        const latinHidden = document.getElementById("latinName");
+        const imageInput = document.getElementById("image");
+        const imgPreview = document.getElementById("image-preview");
 
-        form.addEventListener("submit", (e) => {
+        // Preview image
+        imageInput.addEventListener("change", () => {
+            const file = imageInput.files[0];
+            if (!file) {
+                imgPreview.classList.add("d-none");
+                imgPreview.src = "";
+                return;
+            }
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                imgPreview.src = e.target.result;
+                imgPreview.classList.remove("d-none");
+            };
+            reader.readAsDataURL(file);
+        });
+
+        form.addEventListener("submit", async (e) => {
             e.preventDefault();
             successBox.classList.add("d-none");
 
@@ -188,30 +236,37 @@
                 return;
             }
 
-            // Construire un "payload" JSON (comme si on l'envoyait à une API)
-            const speciesSelect = document.getElementById("species");
+            // Mettre à jour latinName dans le champ caché
             const selectedOption = speciesSelect.options[speciesSelect.selectedIndex];
-            const latinName = selectedOption.getAttribute("data-latin") || null;
+            const latinName = selectedOption.getAttribute("data-latin") || "";
+            latinHidden.value = latinName;
 
-            const payload = {
-                date: document.getElementById("date").value,
-                city: document.getElementById("city").value,
-                environment: document.getElementById("environment").value || null,
-                host: document.getElementById("host").value,
-                species: speciesSelect.value || null,
-                latinName: latinName,
-                severity: document.getElementById("severity").value || null,
-                notes: document.getElementById("notes").value || null,
-                email: document.getElementById("email").value || null
-            };
+            // Construire FormData (tous les champs + fichier)
+            const formData = new FormData(form);
 
-            console.log("Tick report payload (demo, not sent):", payload);
+            try {
+                const res = await fetch("/api/report", {
+                    method: "POST",
+                    body: formData
+                });
 
-            // Afficher message de succès
-            successBox.classList.remove("d-none");
+                const json = await res.json();
+                console.log("Réponse /api/report:", json);
 
-            // Réinitialiser le formulaire
-            form.reset();
+                if (!res.ok || !json.success) {
+                    alert("There was a problem saving your report. Please try again.");
+                    return;
+                }
+
+                successBox.classList.remove("d-none");
+                form.reset();
+                imgPreview.classList.add("d-none");
+                imgPreview.src = "";
+
+            } catch (err) {
+                console.error(err);
+                alert("Network error while sending the report.");
+            }
         });
 
         // Retirer l'état invalide dès qu'on modifie un champ
@@ -224,3 +279,4 @@
 </script>
 
 {% endblock %}
+
