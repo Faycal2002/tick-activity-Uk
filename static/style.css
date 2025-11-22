@@ -53,10 +53,8 @@ p {
     width: 100%;
     max-width: 960px;
     height: 450px;
-    /* Important ! */
     border-radius: 20px;
     background: #ddd;
-    /* fallback au cas où */
 }
 
 /* ===========================
@@ -121,7 +119,7 @@ main {
     width: 60%;
     max-width: 500px;
     height: 2px;
-    margin: 2.5rem auto;
+    margin: 1.8rem auto; /* 🔽 un peu moins d’espace qu’avant */
     background: linear-gradient(to right, transparent, #ff4d4d, transparent);
     opacity: 0.85;
 }
@@ -132,16 +130,13 @@ main {
 
 .info-section {
     background-color: #000;
-    height: 100vh;
-    /* pleine hauteur */
+    /* ❌ plus de height: 100vh; */
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    /* centre tout verticalement */
     align-items: center;
-    /* centre horizontalement */
-    padding-top: 0;
-    padding-bottom: 0;
+    justify-content: center; /* OK, la hauteur est juste celle du contenu maintenant */
+    padding-top: 3rem;
+    padding-bottom: 3rem;
 }
 
 .info-title {
@@ -199,16 +194,11 @@ main {
 /* === FULLSCREEN SECTIONS === */
 .fullscreen-section {
     height: 100vh;
-    /* occupe tout l'écran */
     display: flex;
-    /* pour centrer le contenu */
     flex-direction: column;
     justify-content: center;
-    /* centre verticalement */
     align-items: center;
-    /* centre horizontalement */
     padding: 0;
-    /* pas de padding inutile */
     margin: 0;
 }
 
@@ -225,19 +215,15 @@ main {
    🟦 MAP PAGE LAYOUT
 =========================== */
 
-/* même hauteur pour la carte et la colonne Results */
 .map-results-card {
     height: 520px;
 }
 
-/* zone scrollable pour la liste des résultats */
 .results-scroll {
     max-height: 430px;
-    /* 520 - titre - padding approx */
     overflow-y: auto;
 }
 
-/* pastille de légende */
 .legend-dot {
     width: 12px;
     height: 12px;
@@ -246,7 +232,6 @@ main {
     margin-right: 5px;
 }
 
-/* cartes individuelles dans Results */
 .result-item {
     background: #111;
     border: 1px solid #333;
@@ -254,6 +239,7 @@ main {
     border-radius: 10px;
     margin-bottom: 10px;
 }
+
 /* ===========================
    🟩 SPECIES PAGE (premium)
 =========================== */
@@ -401,6 +387,7 @@ main {
     background: #3cb371;
     color: #000;
 }
+
 /* ===========================
    🟥 REPORT PAGE
 =========================== */
@@ -441,7 +428,9 @@ main {
     color: #d8ffd8;
 }
 
-
+/* ===========================
+   🟨 PREVENTION CARDS
+=========================== */
 
 .prevention-section {
     background-color: #050505;
@@ -467,7 +456,9 @@ main {
     color: #d0d0d0;
 }
 
-
+/* ===========================
+   🟦 SPECIES IMAGE
+=========================== */
 
 .species-img {
     width: 100%;
