@@ -1,0 +1,181 @@
+# Tick Tracker UK  
+Frontend Technical Task – Elanco Placement Program 2026  
+_By Faycel Habchi_
+
+---
+
+## Overview
+
+Tick Tracker UK is a web application designed to help UK citizens track, visualize and report tick sightings.  
+This project was built for the **Elanco Student Placement Technical Task (Frontend)**.
+
+The platform:
+
+- Displays tick activity across the UK  
+- Shows species information and risk levels  
+- Allows users to report new tick sightings  
+- Combines **real API data** + **user-submitted data** stored in SQLite  
+
+---
+
+## Core Features Implemented
+
+### 1. Interactive Map Visualization
+- Dynamic UK map using **Leaflet.js**
+- City-based clustering of tick reports
+- Severity coloring:
+  - Low (green)
+  - Medium (orange)
+  - High (red)
+- Filters:
+  - Date range
+  - Species
+  - Severity level
+
+### 2. Sighting Information
+- Sidebar results dynamically updated
+- Last sighting date per city
+- Most recent species & latin name shown
+- Clickable map markers with detailed popups
+- Quick action buttons planned for future:
+  - Report a sighting
+  - Get directions
+  - Share
+
+### 3. Education Content
+- Tick species guide with:
+  - Real dataset counts
+  - Risk levels
+  - Filtering by name + risk
+- Prevention tips section  
+- Images planned (structure ready)
+
+### 4. Report a Sighting
+- Fully functional report form
+- Instant validation
+- Sends data to Flask API using **POST**
+- Data stored in **SQLite** with SQLAlchemy
+- Automatically appears in:
+  - `/map` page
+  - `/species` (future auto summary)
+  - API `/api/sightings`
+
+---
+
+## Project Structure
+
+```
+
+/
+├── app.py                # Flask backend
+├── ticktracker.db        # SQLite database
+├── templates/            # HTML pages
+│   ├── base.html
+│   ├── index.html
+│   ├── map.html
+│   ├── species.html
+│   └── report.html
+└── static/
+├── style.css
+├── img/
+
+````
+
+---
+
+## Backend API Routes
+
+### `GET /api/sightings`
+Returns a merged list of:
+- Official Elanco tick sightings (`https://dev-task.elancoapps.com/data/tick-sightings`)
+- User-submitted SQLite reports
+
+### `POST /api/report`
+Stores a new user report in SQLite.
+
+Payload example:
+
+```json
+{
+  "date": "2025-01-20",
+  "city": "London",
+  "environment": "Park",
+  "host": "Dog",
+  "species": "Marsh tick",
+  "latinName": "Ixodes apronophorus",
+  "severity": "low",
+  "notes": "Found near a tree",
+  "email": "example@gmail.com"
+}
+````
+
+---
+
+## Technologies Used
+
+### Frontend
+
+* HTML, CSS, JavaScript
+* Bootstrap 4
+* Leaflet.js (map)
+
+### Backend
+
+* Python 3
+* Flask
+* SQLAlchemy
+* SQLite
+
+### External API
+
+* **Elanco Tick Sightings API**
+  [https://dev-task.elancoapps.com/data/tick-sightings](https://dev-task.elancoapps.com/data/tick-sightings)
+
+---
+
+## How to Run the Project
+
+### 1. Install dependencies
+
+```bash
+pip install flask flask_sqlalchemy requests
+```
+
+### 2. Create the database
+
+Open Python shell:
+
+```python
+from app import db
+db.create_all()
+```
+
+### 3. Run the server
+
+```bash
+python app.py
+```
+
+The project will start on:
+
+👉 **[http://localhost:5000](http://localhost:5000)**
+
+---
+
+## 🎥 Demo Video
+
+A short walkthrough video (under 10 minutes) is provided in the GitHub repository.
+
+---
+
+## Author
+
+**Faycel Habchi**
+Frontend Developer – Candidate for Elanco Student Placement 2026
+
+---
+
+## Notes
+
+This project is built for educational & recruitment purposes, following the requirements outlined in the official Elanco technical task description.
+

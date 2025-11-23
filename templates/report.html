@@ -19,7 +19,7 @@
         This information helps improve awareness of tick-borne risks.
     </div>
 
-    <div class="card bg-dark text-light shadow-sm rounded-lg report-card">
+    <div class="card bg-dark text-light rounded-lg report-card">
         <div class="card-body">
 
             <!-- 🔴 FORM AVEC enctype + TOUT dedans -->
@@ -70,8 +70,6 @@
                             <option>Belfast</option>
                             <option>Southampton</option>
                             <option>Leicester</option>
-
-                            <!-- villes ajoutées -->
                             <option>Portsmouth</option>
                             <option>Brighton</option>
                             <option>Hull</option>
@@ -217,15 +215,15 @@
             reader.readAsDataURL(file);
         });
 
-        form.addEventListener("submit", async (e) => {
-            e.preventDefault();
-            successBox.classList.add("d-none");
+        form.addEventListener("submit", async (e) => {   //asyncheron pour eviter le bloquage de la page et recharger la page
+            e.preventDefault();   //pour ne pas utiliser la methode par default
+            successBox.classList.add("d-none");    //si lutilisateur avait soumit au paravant on cache le message de succes 
 
             // Validation simple
-            let valid = true;
-            const requiredFields = ["date", "city", "host"];
+            let valid = true; //si il ya une erreur elle passera a faux
+            const requiredFields = ["date", "city", "host"];  //ces choses sont obligatoirea
 
-            requiredFields.forEach(id => {
+            requiredFields.forEach(id => { //boucle
                 const field = document.getElementById(id);
                 if (!field.value) {
                     field.classList.add("is-invalid");
@@ -245,15 +243,15 @@
             latinHidden.value = latinName;
 
             // Construire FormData (tous les champs + fichier)
-            const formData = new FormData(form);
+            const formData = new FormData(form);   //api js cree object qui recolte les donnees du formulaire
 
             try {
-                const res = await fetch("/api/report", {
+                const res = await fetch("/api/report", { //
                     method: "POST",
                     body: formData
                 });
 
-                const json = await res.json();
+                const json = await res.json(); //attend la reponse du serveur et la convertit en json
                 console.log("Réponse /api/report:", json);
 
                 if (!res.ok || !json.success) {
