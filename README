@@ -1,3 +1,4 @@
+
 # Tick Tracker UK  
 Frontend Technical Task – Elanco Placement Program 2026  
 _By Faycel Habchi_
@@ -78,7 +79,7 @@ The platform:
 └── static/
 ├── style.css
 ├── img/
-
+└── uploads/ # User-uploaded images
 ````
 
 ---
@@ -129,42 +130,28 @@ Payload example:
 ### External API
 
 * **Elanco Tick Sightings API**
-  [https://dev-task.elancoapps.com/data/tick-sightings](https://dev-task.elancoapps.com/data/tick-sightings)
+
+(https://dev-task.elancoapps.com/data/tick-sightings)
 
 ---
 
 ## How to Run the Project
 
-### 1. Install dependencies
+python -m venv .venv
 
-```bash
+.venv\scripts\activate
+
+pip install flask
+
+pip install Flask-WTF
+
 pip install flask flask_sqlalchemy requests
-```
 
-### 2. Create the database
-
-Open Python shell:
-
-```python
-from app import db
-db.create_all()
-```
-
-### 3. Run the server
-
-```bash
 python app.py
-```
 
 The project will start on:
 
-👉 **[http://localhost:5000](http://localhost:5000)**
-
----
-
-## 🎥 Demo Video
-
-A short walkthrough video (under 10 minutes) is provided in the GitHub repository.
+(http://localhost:5000)
 
 ---
 
