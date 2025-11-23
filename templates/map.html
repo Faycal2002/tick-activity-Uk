@@ -71,44 +71,6 @@
 
     </div>
 
-    <!-- TIMELINE / SEASONAL ACTIVITY -->
-    <div class="row mt-4">
-        <div class="col-12">
-            <div class="card bg-dark text-light p-3 shadow-sm rounded-lg">
-                <div class="d-flex flex-wrap justify-content-between align-items-center mb-3">
-                    <h5 class="mb-2">Seasonal tick activity</h5>
-
-                    <div class="d-flex flex-wrap">
-                        <div class="mr-2 mb-2">
-                            <label class="filter-label mb-1" for="timeline-city">City</label>
-                            <select id="timeline-city"
-                                    class="form-control bg-black border-secondary"
-                                    style="min-width: 180px;">
-                                <option value="">Select a city</option>
-                                <!-- options remplies en JS -->
-                            </select>
-                        </div>
-
-                        <div class="mb-2">
-                            <label class="filter-label mb-1" for="timeline-year">Year</label>
-                            <select id="timeline-year"
-                                    class="form-control bg-black border-secondary"
-                                    style="min-width: 140px;">
-                                <option value="">All years</option>
-                                <!-- options remplies en JS -->
-                            </select>
-                        </div>
-                    </div>
-                </div>
-
-                <canvas id="timeline-chart" height="80"></canvas>
-                <p class="text-muted mt-2 mb-0" id="timeline-note">
-                    Select a city and year to see tick sightings over time.
-                </p>
-            </div>
-        </div>
-    </div>
-
 </div>
 
 {% endblock %}
@@ -120,7 +82,6 @@
     let map;
     let markers = [];
     let allSightings = [];
-    let timelineChart = null;
 
     const cityCoords = {
         "London": [51.5074, -0.1278],
@@ -138,8 +99,6 @@
         "Belfast": [54.5973, -5.9301],
         "Southampton": [50.9097, -1.4043],
         "Leicester": [52.6369, -1.1398],
-
-        // villes ajoutées
         "Portsmouth": [50.8198, -1.0880],
         "Brighton": [50.8225, -0.1372],
         "Hull": [53.7676, -0.3274],
@@ -214,7 +173,6 @@
         });
     }
 
-    // Regroupe les sightings par ville
     function aggregateByCity(rows, severityMap = null) {
         const stats = {};
 
@@ -243,7 +201,6 @@
         const list = Object.values(stats);
         if (list.length === 0) return [];
 
-        // garder les severities globales si fournies
         if (severityMap) {
             list.forEach(c => {
                 c.severity = severityMap[c.city] || "low";
@@ -251,7 +208,6 @@
             return list;
         }
 
-        // calcul des severities globales : <60 low, 60–70 medium, >70 high
         list.forEach(c => {
             if (c.count < 60) {
                 c.severity = "low";
@@ -357,212 +313,6 @@
         });
     }
 
-    // Remplir les selects City + Year pour la timeline
-    function populateTimelineSelects() {
-        const citySelect = document.getElementById("timeline-city");
-        const yearSelect = document.getElementById("timeline-year");
-
-        // villes : à partir de cityCoords
-        citySelect.innerHTML = '<option value="">Select a city</option>';
-        Object.keys(cityCoords).sort().forEach(name => {
-            const opt = document.createElement("option");
-            opt.value = name;
-            opt.textContent = name;
-            citySelect.appendChild(opt);
-        });
-
-        // années : à partir des données
-        const yearsSet = new Set();
-        allSightings.forEach(s => {
-            const d = new Date(s.date);
-            if (!isNaN(d.getTime())) {
-                yearsSet.add(d.getFullYear());
-            }
-        });
-
-        const years = Array.from(yearsSet).sort();
-        yearSelect.innerHTML = '<option value="">All years</option>';
-        years.forEach(y => {
-            const opt = document.createElement("option");
-            opt.value = String(y);
-            opt.textContent = String(y);
-            yearSelect.appendChild(opt);
-        });
-    }
-
-    function resetTimeline() {
-        const note = document.getElementById("timeline-note");
-        const canvas = document.getElementById("timeline-chart");
-
-        if (timelineChart) {
-            timelineChart.destroy();
-            timelineChart = null;
-        }
-        if (note) {
-            note.textContent = "Select a city and year to see tick sightings over time.";
-        }
-        if (canvas) {
-            const ctx = canvas.getContext("2d");
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-        }
-    }
-
-    // 🔴 MODE DOUBLE :
-    // - si Year vide => axe X = années, points = sightings / année
-    // - si Year choisi => axe X = mois, points = sightings / mois
-    function updateTimeline() {
-        const city = document.getElementById("timeline-city").value;
-        const yearVal = document.getElementById("timeline-year").value;
-        const note = document.getElementById("timeline-note");
-        const canvas = document.getElementById("timeline-chart");
-        if (!canvas) return;
-
-        if (!city) {
-            resetTimeline();
-            return;
-        }
-
-        // Filtre de base : par ville
-        let filtered = allSightings.filter(s => {
-            const cityNorm = normalizeCityName(s.city || s.location);
-            if (cityNorm !== city) return false;
-            const d = new Date(s.date);
-            if (isNaN(d.getTime())) return false;
-            // si année choisie, on filtre dessus
-            if (yearVal && String(d.getFullYear()) !== yearVal) return false;
-            return true;
-        });
-
-        if (filtered.length === 0) {
-            if (timelineChart) {
-                timelineChart.destroy();
-                timelineChart = null;
-            }
-            if (note) {
-                note.textContent = `No data for ${city}${yearVal ? " in " + yearVal : ""}. Try another selection or add a report.`;
-            }
-            return;
-        }
-
-        // Si aucune année choisie → ALL YEARS → axe X = années
-        if (!yearVal) {
-            const countsByYear = {};
-            filtered.forEach(s => {
-                const d = new Date(s.date);
-                if (isNaN(d.getTime())) return;
-                const y = d.getFullYear();
-                countsByYear[y] = (countsByYear[y] || 0) + 1;
-            });
-
-            const labels = Object.keys(countsByYear)
-                .map(y => Number(y))
-                .sort((a, b) => a - b)
-                .map(y => String(y));
-            const dataArr = labels.map(y => countsByYear[Number(y)] || 0);
-
-            if (timelineChart) {
-                timelineChart.destroy();
-            }
-
-            timelineChart = new Chart(canvas.getContext("2d"), {
-                type: "line",
-                data: {
-                    labels,
-                    datasets: [{
-                        label: `Sightings in ${city} (all years)`,
-                        data: dataArr,
-                        fill: false,
-                        tension: 0.2
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    plugins: {
-                        legend: { display: false }
-                    },
-                    scales: {
-                        x: {
-                            title: {
-                                display: true,
-                                text: "Year"
-                            }
-                        },
-                        y: {
-                            title: {
-                                display: true,
-                                text: "Number of sightings"
-                            },
-                            beginAtZero: true,
-                            ticks: { stepSize: 1 }
-                        }
-                    }
-                }
-            });
-
-            if (note) {
-                note.textContent = `Yearly tick sightings in ${city} (all years).`;
-            }
-
-            return;
-        }
-
-        // Sinon → année spécifique → axe X = mois (ton ancien comportement)
-        const countsByMonth = {};
-        filtered.forEach(s => {
-            const d = new Date(s.date);
-            if (isNaN(d.getTime())) return;
-            const m = d.getMonth(); // 0–11
-            countsByMonth[m] = (countsByMonth[m] || 0) + 1;
-        });
-
-        const monthLabels = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
-                             "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-        const dataArr = monthLabels.map((_, idx) => countsByMonth[idx] || 0);
-
-        if (timelineChart) {
-            timelineChart.destroy();
-        }
-
-        timelineChart = new Chart(canvas.getContext("2d"), {
-            type: "line",
-            data: {
-                labels: monthLabels,
-                datasets: [{
-                    label: `Sightings in ${city} (${yearVal})`,
-                    data: dataArr,
-                    fill: false,
-                    tension: 0.2
-                }]
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    legend: { display: false }
-                },
-                scales: {
-                    x: {
-                        title: {
-                            display: true,
-                            text: "Month"
-                        }
-                    },
-                    y: {
-                        title: {
-                            display: true,
-                            text: "Number of sightings"
-                        },
-                        beginAtZero: true,
-                        ticks: { stepSize: 1 }
-                    }
-                }
-            }
-        });
-
-        if (note) {
-            note.textContent = `Monthly tick sightings in ${city} (${yearVal}).`;
-        }
-    }
-
     async function initMap() {
         map = L.map("map").setView([54.5, -3], 5.5);
 
@@ -573,7 +323,6 @@
 
         allSightings = await fetchSightings();
 
-        // calcul des severities globales une seule fois
         const globalCityList = aggregateByCity(allSightings);
         const severityMap = {};
         globalCityList.forEach(c => {
@@ -588,18 +337,12 @@
             renderList(cities);
         }
 
-        populateTimelineSelects();
-        resetTimeline();
         refresh();
 
         // Filtres
         document
             .querySelectorAll("#filter-date, #filter-species, #filter-severity")
             .forEach(el => el.addEventListener("change", refresh));
-
-        // Timeline selects
-        document.getElementById("timeline-city").addEventListener("change", updateTimeline);
-        document.getElementById("timeline-year").addEventListener("change", updateTimeline);
 
         // Boutons Share dans la colonne de droite
         document.addEventListener("click", async (e) => {

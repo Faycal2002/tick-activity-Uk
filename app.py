@@ -171,27 +171,6 @@ def api_report():
 
         return jsonify({"success": True, "id": report.id})
 
-    # fallback JSON (au cas où)
-    data = request.get_json() or {}
-    if not data.get("date") or not data.get("city") or not data.get("host"):
-        return jsonify({"success": False, "error": "Missing required fields"}), 400
-
-    report = TickReport(
-        date=data.get("date"),
-        city=data.get("city"),
-        environment=data.get("environment"),
-        host=data.get("host"),
-        species=data.get("species"),
-        latin_name=data.get("latinName"),
-        severity=data.get("severity"),
-        notes=data.get("notes"),
-        email=data.get("email"),
-    )
-    db.session.add(report)
-    db.session.commit()
-
-    return jsonify({"success": True, "id": report.id})
-
 
 # ───────────────────────────
 # API : données pour la MAP
@@ -258,6 +237,7 @@ def debug_reports():
         "species": r.species,
         "latinName": r.latin_name,
         "image_filename": r.image_filename,
+        "notes": r.notes,  
         "created_at": r.created_at.isoformat() if r.created_at else None
     } for r in reports])
 
