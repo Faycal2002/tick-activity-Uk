@@ -137,7 +137,6 @@ Payload example:
 
 ## How to Run the Project
 
-python -m venv .venv
 
 .venv\scripts\activate
 
