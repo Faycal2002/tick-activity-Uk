@@ -140,11 +140,7 @@ Payload example:
 
 .venv\scripts\activate
 
-pip install flask
-
-pip install Flask-WTF
-
-pip install flask flask_sqlalchemy requests
+pip install -r requirements.txt
 
 python app.py
 
