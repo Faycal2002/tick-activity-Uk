@@ -14,7 +14,7 @@ from pathlib import Path
 
 app = Flask(__name__)
 
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///ticktracker.db"
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///instance/ticktracker.db"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 db = SQLAlchemy(app)
