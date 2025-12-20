@@ -4,7 +4,9 @@ from datetime import datetime
 import requests
 from collections import Counter
 import os
+import json
 from werkzeug.utils import secure_filename
+from pathlib import Path
 
 # ───────────────────────────
 # Flask + SQLAlchemy setup
@@ -12,12 +14,10 @@ from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
 
-# IMPORTANT : ce fichier sera créé dans le même dossier que app.py
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///ticktracker.db"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 db = SQLAlchemy(app)
-
 
 # ───────────────────────────
 # Modèle SQLAlchemy
@@ -27,7 +27,7 @@ class TickReport(db.Model):
     __tablename__ = "tick_reports"
 
     id = db.Column(db.Integer, primary_key=True)
-    date = db.Column(db.String, nullable=False)          # "YYYY-MM-DD"
+    date = db.Column(db.String, nullable=False)          # "YYYY-MM-DD" (ou ISO)
     city = db.Column(db.String, nullable=False)
     environment = db.Column(db.String)
     host = db.Column(db.String, nullable=False)
@@ -39,52 +39,93 @@ class TickReport(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     image_filename = db.Column(db.String)
 
-
     def to_dict_for_sightings(self):
         return {
             "date": self.date,
             "city": self.city,
+            "location": self.city,          # ✅ pour compatibilité frontend (city || location)
             "species": self.species,
             "latinName": self.latin_name,
             "source": "user",
         }
-
 
 # 🔴 CRÉER LES TABLES DÈS LE CHARGEMENT DU MODULE
 with app.app_context():
     db.create_all()
     print("✅ Tables SQLite vérifiées / créées")
 
+# ───────────────────────────
+# Data sources
+# ───────────────────────────
 
-API_BASE = "https://dev-task.elancoapps.com/data"
-
+API_BASE = "https://dev-task.elancoapps.com/data"  # tu peux le laisser
+BASE_DIR = Path(__file__).resolve().parent
+LOCAL_JSON_PATH = BASE_DIR / "data" / "tick_sightings.json"
 
 # ───────────────────────────
-# Helper : API Elanco + DB
+# Helpers
 # ───────────────────────────
+
+def load_local_sightings():
+    """Load tick sightings from a local JSON file as fallback."""
+    if not LOCAL_JSON_PATH.exists():
+        print(f"⚠️ Local JSON not found: {LOCAL_JSON_PATH}")
+        return []
+
+    try:
+        with LOCAL_JSON_PATH.open("r", encoding="utf-8") as f:
+            data = json.load(f)
+            if isinstance(data, list):
+                return data
+            print("⚠️ Local JSON must be a list of sightings")
+            return []
+    except Exception as e:
+        print("❌ Error reading local JSON:", e)
+        return []
+
+def normalize_sighting(s: dict) -> dict:
+    """Make sure each sighting has fields frontend expects."""
+    # latinName
+    if "latinName" not in s and "latin_name" in s:
+        s["latinName"] = s["latin_name"]
+
+    # location / city (frontend uses location || city)
+    if "location" not in s and "city" in s:
+        s["location"] = s["city"]
+    if "city" not in s and "location" in s:
+        s["city"] = s["location"]
+
+    # date as string
+    if "date" in s:
+        s["date"] = str(s["date"])
+
+    return s
 
 def get_combined_sightings():
-    # 1) API Elanco
+    # 1) Try Elanco API, fallback to local JSON
+    elanco = []
     try:
         r = requests.get(f"{API_BASE}/tick-sightings", timeout=5)
         r.raise_for_status()
         elanco = r.json() or []
+        print(f"✅ Loaded from Elanco API: {len(elanco)} sightings")
     except Exception as e:
-        print("Erreur API Elanco:", e)
-        elanco = []
+        print("⚠️ Elanco API failed, using local JSON:", e)
+        elanco = load_local_sightings()
+        print(f"✅ Loaded from local JSON: {len(elanco)} sightings")
 
     for s in elanco:
+        normalize_sighting(s)
         s["source"] = "elanco"
 
-    # 2) Reports utilisateur
+    # 2) User reports
     reports = TickReport.query.order_by(TickReport.date.desc()).all()
     user_data = [r.to_dict_for_sightings() for r in reports]
 
-    print(f"ℹ️ Nombre de reports en DB : {len(user_data)}")
+    print(f"ℹ️ User reports in DB: {len(user_data)}")
 
-    # 3) fusion
+    # 3) merge
     return elanco + user_data
-
 
 # ───────────────────────────
 # PAGES HTML
@@ -94,34 +135,23 @@ def get_combined_sightings():
 def home():
     return render_template("index.html")
 
-
 @app.route("/map")
 def map_page():
     return render_template("map.html")
 
-
 @app.route("/species")
 def species_page():
-    """
-    Page species avec nombres dynamiques :
-    on compte les sightings par nom latin (API + DB).
-    """
     all_sightings = get_combined_sightings()
-
     counts_by_latin = {}
     for s in all_sightings:
         latin = s.get("latinName")
         if latin:
             counts_by_latin[latin] = counts_by_latin.get(latin, 0) + 1
-
-    # On passe le dict "counts" au template
     return render_template("species.html", counts=counts_by_latin)
-
 
 @app.route("/report")
 def report_page():
     return render_template("report.html")
-
 
 # ───────────────────────────
 # API : enregistrer un report
@@ -129,7 +159,7 @@ def report_page():
 
 @app.route("/api/report", methods=["POST"])
 def api_report():
-    # Si formulaire classique multipart (avec fichier)
+    # ✅ Support multipart/form-data (form + image)
     if "multipart/form-data" in (request.content_type or ""):
         form = request.form
         file = request.files.get("image")
@@ -144,7 +174,6 @@ def api_report():
         image_filename = None
         if file and file.filename:
             filename = secure_filename(file.filename)
-            # nom unique
             unique_name = f"{datetime.utcnow().timestamp()}_{filename}"
             upload_dir = os.path.join(app.static_folder, "uploads")
             os.makedirs(upload_dir, exist_ok=True)
@@ -167,10 +196,12 @@ def api_report():
 
         db.session.add(report)
         db.session.commit()
-        print(f"✅ Report sauvegardé avec image={image_filename}")
+        print(f"✅ Report saved (image={image_filename})")
 
         return jsonify({"success": True, "id": report.id})
 
+    # ✅ Sinon on répond proprement
+    return jsonify({"success": False, "error": "Content-Type must be multipart/form-data"}), 415
 
 # ───────────────────────────
 # API : données pour la MAP
@@ -181,9 +212,8 @@ def api_sightings():
     data = get_combined_sightings()
     return jsonify(data)
 
-
 # ───────────────────────────
-# API : stats espèces (si tu veux t'en servir ailleurs)
+# API : stats espèces
 # ───────────────────────────
 
 @app.route("/api/species-stats")
@@ -221,9 +251,8 @@ def api_species_stats():
     result.sort(key=lambda x: x["count"], reverse=True)
     return jsonify(result)
 
-
 # ───────────────────────────
-# ROUTE DEBUG pour voir ce qu'il y a en DB
+# ROUTE DEBUG
 # ───────────────────────────
 
 @app.route("/debug/reports")
@@ -237,14 +266,14 @@ def debug_reports():
         "species": r.species,
         "latinName": r.latin_name,
         "image_filename": r.image_filename,
-        "notes": r.notes,  
+        "notes": r.notes,
         "created_at": r.created_at.isoformat() if r.created_at else None
     } for r in reports])
-
 
 # ───────────────────────────
 # Run
 # ───────────────────────────
 
 if __name__ == "__main__":
-    app.run(debug=True, host="localhost", port=5000)
+    # ✅ IMPORTANT pour AWS/EC2 : écouter sur toutes les interfaces
+    app.run(debug=True, host="0.0.0.0", port=5000)
