@@ -1,45 +1,14 @@
 
-# Tick Tracker UK
+Tick Tracker UK — Application d'exploration d'observations de tiques
 
-Interactive Flask web app for exploring tick activity across the UK, built as part of the Elanco Student Placement technical task.
-
-## Overview
-
-Tick Tracker UK helps users explore tick sightings, understand species risk levels, and submit new reports through a simple web interface. The application combines official Elanco data with user reports stored in SQLite, then presents everything on an interactive map and a species guide.
-
-## What the app does
-
-- Displays tick sightings on an interactive UK map
-- Lets users filter and inspect sightings by city, species, date, and severity
-- Summarises species counts and risk levels
-- Allows users to submit a new tick report through the website
-- Falls back to a local JSON dataset if the external API is unavailable
-
-## Key Features
-
-### Interactive map
-- Built with Leaflet.js and OpenStreetMap tiles
-- Marker-based view of sightings across UK cities
-- Popup details for species, latin name, location, and date
-
-### Species guide
-- Aggregated species statistics from combined datasets
-- Simple risk classification based on occurrence volume
-- Clean page layout for quick browsing
-
-### Reporting flow
-- Flask form submission backed by SQLAlchemy
-- Persistent storage in SQLite
-- New reports are immediately available through the API and map data
-
-## Tech Stack
+Tech Stack
 
 - Frontend: HTML, CSS, JavaScript, Bootstrap 4, Leaflet.js
 - Backend: Python 3, Flask, SQLAlchemy
 - Database: SQLite
-- Data source: Elanco Tick Sightings API + local JSON fallback
+- Données: Elanco Tick Sightings API + fallback JSON local
 
-## Project Structure
+Project Structure
 
 ```text
 .
@@ -58,13 +27,13 @@ Tick Tracker UK helps users explore tick sightings, understand species risk leve
     └── species.html
 ```
 
-## API Endpoints
+API Endpoints (essentiel)
 
-- `GET /api/sightings` returns the merged sightings dataset used by the map
-- `POST /api/report` creates a new report in SQLite
-- `GET /api/species-stats` returns aggregated species statistics
+- `GET /api/sightings` — renvoie l'ensemble des observations utilisées par la carte
+- `POST /api/report` — ajoute un nouveau signalement dans SQLite
+- `GET /api/species-stats` — statistiques agrégées par espèce
 
-### Example payload
+Exemple de payload attendu pour le `POST /api/report` :
 
 ```json
 {
@@ -80,7 +49,7 @@ Tick Tracker UK helps users explore tick sightings, understand species risk leve
 }
 ```
 
-## Run Locally
+Run locally
 
 ```bash
 python -m venv .venv
@@ -89,16 +58,15 @@ pip install -r requirements.txt
 python app.py
 ```
 
-Open the app at `http://localhost:5000`.
+Ouvrir l'application à l'adresse http://localhost:5000
 
-## Why this project stands out
+Pourquoi ce projet est intéressant
 
-- Focused on a real public-health problem
-- Clear separation between data, API, and UI
-- Uses live data plus a fallback to stay reliable
-- Presents the project in a way that is easy to demo in an interview
+- Résout un problème de santé publique réel
+- Séparation claire entre API, données et interface
+- Fiabilité : données en direct + fallback local
 
-## Author
+Mainteneur
 
 Faycel Habchi
 
